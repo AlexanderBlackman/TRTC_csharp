@@ -41,7 +41,9 @@ namespace TRTC_csharp.Maths
         public static mTuple operator /(mTuple t, double d)=>
             new mTuple(t.x / d, t.y / d, t.z / d, t.w / d);
         
-
+      /// <summary>
+      /// The scalar product of two vectors.  THe smaller it is, the larger the angle between the vectors.
+      /// </summary>
         public static double Dot(mTuple a, mTuple b)=>
             (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w);
 
@@ -68,6 +70,9 @@ namespace TRTC_csharp.Maths
                 a.y + b.y,
                 a.z + b.z);
 
+      /// <summary>
+      /// Gets the vector perpendicular to two vectors.
+      /// </summary>
         public static mVector Cross(mVector a, mVector b)
         {
             return new mVector((a.y * b.z) - (a.z * b.y),
@@ -75,6 +80,9 @@ namespace TRTC_csharp.Maths
                                (a.x * b.y) - (a.y * b.x));
         }
 
+      /// <summary>
+      /// This uses pythag to get magnitude/length from a vector's direction and distance.
+      /// </summary>
         public double Magnitude()
         {
             return Math.Sqrt(
@@ -92,12 +100,17 @@ namespace TRTC_csharp.Maths
         //                        (this.w / this.Magnitude()));
         //}
 
+      /// <summary>
+      /// Convert an arbitary vector into a unit vector
+      /// </summary>
         public mVector Normalised()
         {
             return new mVector( (this.x / this.Magnitude()),//This seems to work for mags above 1 but not below.
                                 (this.y / this.Magnitude()),
                                 (this.z / this.Magnitude()));
         }
+
+
 
         public override string ToString() => $"{x},{y},{z}";
     }

@@ -70,7 +70,6 @@ namespace TRTC_csharp.Tests.Look
             //Act
             var result = c1 * c2;
             //Assert
-            //result.Should().BeEquivalentTo(expected);
             result.red.Should().BeApproximately(0.9, d);
             result.green.Should().BeApproximately(0.2, d);
             result.blue.Should().BeApproximately(0.04, d);

@@ -21,6 +21,8 @@ namespace TRTC_csharp.Look
             this.blue = blue;
         }
 
+
+
         #region operator overloads
         public static Colour operator +(Colour a, Colour b)=>
             new Colour ((a.red + b.red), (a.green + b.green), (a.blue + b.blue));
@@ -44,7 +46,7 @@ namespace TRTC_csharp.Look
         public static readonly Colour Purple = new Colour(1, 0, 1);
         #endregion
 
-
+        public override string ToString() => $"(r{red}, g{green}, b{blue})";
 
     }
 }

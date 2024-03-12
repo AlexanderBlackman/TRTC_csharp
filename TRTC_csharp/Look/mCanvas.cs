@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,18 +20,32 @@ namespace TRTC_csharp.Look
             Width = width;
             Height = height;
             PixelGrid = new Colour[Width, Height];
-            for (int column = 0; column < Width; column++)
+
+         for (int column = 0; column < Width; column++)
+         {
+            for (int row = 0; row < Height; row++)
             {
-                for (int row = 0; row < Height; row++)
-                {
-                    PixelGrid[column, row] = Colour.Black;
-                    
-                }
+               PixelGrid[column, row] = Colour.Black;
 
             }
-        }
+
+         }
+      }
+
 
         public void WritePixel(int x, int y, Colour colour) => this.PixelGrid[x, y] = colour;
+
+      public void WriteAllPixels(Colour colour)
+      {
+         for (int column = 0; column < Width; column++)
+         {
+            for (int row = 0; row < Height; row++)
+            {
+               PixelGrid[column, row] = colour;
+            }
+
+         }
+      }
         
         public string ConvertDoubleToClampedString(Double value, int max = 255)
         {
@@ -43,82 +58,82 @@ namespace TRTC_csharp.Look
         }
 
         public string GeneratePPMFromColours(Colour colour, int max = 255) =>
-            ConvertDoubleToClampedString(colour.red, max) + "\n" +
-            ConvertDoubleToClampedString(colour.green, max) + "\n" +
-            ConvertDoubleToClampedString(colour.blue, max) +"\n";
+            ConvertDoubleToClampedString(colour.red, max) + " " +
+            ConvertDoubleToClampedString(colour.green, max) + " " +
+            ConvertDoubleToClampedString(colour.blue, max) + " ";
 
+      
 
-
-        public string GenerateListOfColourInfo(int max = 255)
-        {
-            StringBuilder list = new StringBuilder();
-
-            for (int row = 0; row < Height -1; row++)
+      public Queue<string> GenerateStringQueueFromCanvas()
+      {
+         Queue<string> queue = new Queue<string>();
+         for (int y = 0; y < Height; y++)
+         {
+            StringBuilder sb = new StringBuilder();
+            for (int x = 0; x < Width; x++)
             {
-                {
-                    for (int column = 0; column < Width -1; column++)
-                    {
-                        list.AppendLine(GeneratePPMFromColours(this.PixelGrid[row, column], max));
-                        //Debug.WriteLine(GeneratePPMFromColours(this.PixelGrid[row, column], max));
-                    }
-                    list.AppendLine();
-
-                }
+               sb.Append (GeneratePPMFromColours(PixelGrid[x, y]));
             }
-            return list.ToString();
+            queue.Enqueue(sb.ToString().TrimEnd());
+         }
+         return queue;
+      }
+
+      public Queue<string> CreateQueueOfSpecifiedLineLength(Queue<string> inputedSQ, int maxLength = 70, int atomMaxLength = 3) 
+      {
+         var result = new Queue<string>();
+         while (inputedSQ.Count > 0)
+         {
+            string rowString = inputedSQ.Dequeue();
+            while (rowString.Length > maxLength)
+            {
+               int potentialMax = maxLength - atomMaxLength;
+               for (int i = potentialMax; i < rowString.Length && i < maxLength; i++)
+               {
+                  if (rowString[i] == ' ')
+                  {
+                     result.Enqueue(rowString.Substring(0, i));
+                     rowString = rowString.Substring(i + 1);
+                     break;
+                  }
+               }
+            }
+            result.Enqueue(rowString);
+         }
+         return result;
+
+      }
+    public string ConstructHeader(int max = 255)
+        {
+            StringBuilder export = new("P3\r\n");
+            export.AppendLine($"{this.Width} {this.Height}");
+            export.AppendLine($"{max}");
+
+            return export.ToString();
+        }
+        public string ConstructBody(int max = 255)
+        {
+         StringBuilder export = new();
+         Queue<string> validLines = CreateQueueOfSpecifiedLineLength(GenerateStringQueueFromCanvas());
+         foreach (string line in validLines)
+         {
+            export.AppendLine(line);
+         }
+
+            return export.ToString();
         }
 
+        public string ConvertToPPMString()=>
+            ConstructHeader() +  ConstructBody();
 
-
-
-
-
-    //    public string GeneratePPMFromColours(Colour colour, string line, int max = 255) =>
-    //line +=  ((line + ConvertDoubleToClampedString(colour.red, max))  < 70) + " " +
-    // ConvertDoubleToClampedString(colour.green, max) + " " +
-    //ConvertDoubleToClampedString(colour.blue, max);
-
-
-
-    //    public string makeLinesFromColours(Colour colour, string line, int max =255)
-    //    {
-    //        if (line.Length < 59) { line += GeneratePPMFromColours(colour); }
-
-        
-
-
-        public string ConvertToPPM()
-        {            
-            StringBuilder export = new("P3");
-            export.Append($"\n{this.Width} {this.Height}");
-            export.Append("\n255");
-            
-            StringBuilder line = new StringBuilder();
-
-            using (StreamReader reader = new StreamReader(GenerateListOfColourInfo()))
-            { 
-            while (reader.ReadLine() != null)
-                {
-                    while ((line.Length + reader.ReadLine().Length <= 70) 
-                            && (reader.ReadLine() != String.Empty))
-                        {
-                            line.Append(reader.ReadLine() );
-                            if ( line.Length != 70) line.Append(" ");
-                        }
-                    export.AppendLine(line.ToString());
-                    line = new StringBuilder();
-                    }
-    }
-                return export.ToString();
+      public void ExportToPPMFile()
+      {
+         using (StreamWriter output = new (@"D://myFirst.PPM"))
+         {
+            output.Write(ConvertToPPMString());
+         }
+      }
             }
-
-
-
-
-            }
-
-
-
 
         }
 
@@ -128,7 +143,8 @@ namespace TRTC_csharp.Look
      Too lazy for additional methods 
     Maybe I should convert the doubles Colour by Colour? 
     Line length matters more than keeping colours together, I should do it by individual subcolour
-     */
+    It seems the list of colourinfo needs to completed before it can be read by streamreader. WRONG! It's reading it as a path not a string.
+    Would a queue work better than a string?  Or an array for line strings. */
 
 
 

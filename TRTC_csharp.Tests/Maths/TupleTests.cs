@@ -40,7 +40,7 @@ namespace TRTC_csharp.Tests.Maths
         }
 
         [TestMethod]
-        public void TestIfVectorSubclassEqualsVectorTuple()
+        public void DoesVectorSubclassEqualVectorTuple()
         {
             // Arrange
             var v = new mVector(4.3, -4.2, 3.1);
@@ -57,7 +57,7 @@ namespace TRTC_csharp.Tests.Maths
 
 
         [TestMethod]
-        public void TestIfTuplesCanBeAdded()
+        public void CanTuplesBeAdded()
         {
             //Arrange 
             var a1 = new mTuple(3, -2, 5, 1);
@@ -72,7 +72,7 @@ namespace TRTC_csharp.Tests.Maths
         }
 
         [TestMethod]
-        public void TestIfPointsCanBeSubtracted()
+        public void PointsCanBeSubtractedFromPoints()
         {
             //Arrange
             var p1 = new mPoint(3, 2, 1);
@@ -87,7 +87,7 @@ namespace TRTC_csharp.Tests.Maths
             result.w.Should().Be(0.0);
         }
         [TestMethod]
-        public void TestIfVectorsCanBeSubtractedFromPoints()
+        public void VectorsCanBeSubtractedFromPoints()
         {
             //Arrange
             var p1 = new mPoint(3, 2, 1);
@@ -102,7 +102,7 @@ namespace TRTC_csharp.Tests.Maths
         }
 
         [TestMethod]
-        public void TestIfVectorsCanBeSubtractedFromVectors()
+        public void VectorsCanBeSubtractedFromVectors()
         {
             //Arrange
             var v1 = new mVector(3, 2, 1);
@@ -118,7 +118,7 @@ namespace TRTC_csharp.Tests.Maths
         }
 
         [TestMethod]
-        public void NegatingATupleTest()
+        public void NegatingATuple()
         {
             //Arrange
             var t1 = new mTuple(1, -2, 3, -4);

@@ -7,8 +7,14 @@ using TRTC_csharp.Maths;
 
 namespace TRTC_csharp.Play
 {
-    internal class Projectile
+    public class Projectile
     {
+        public Projectile(mVector velocity, mPoint position)
+        {
+            Velocity = velocity;
+            Position = position;
+        }
+
         public mVector Velocity { get; set; }
         public mPoint Position { get; set; }
 

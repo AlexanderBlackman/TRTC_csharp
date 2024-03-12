@@ -7,8 +7,13 @@ using TRTC_csharp.Maths;
 
 namespace TRTC_csharp.Play
 {
-    internal class Environment
+    public class Environment
     {
+        public Environment(mVector gravity, mVector wind)
+        {
+            Gravity = gravity;
+            Wind = wind;
+        }
         public mVector Gravity;
         public mVector Wind;
 

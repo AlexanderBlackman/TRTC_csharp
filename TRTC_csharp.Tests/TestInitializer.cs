@@ -1,24 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TRTC_csharp.Tests
 {
-    [TestClass]
-    public static class TestInitializer
-    {
-        [AssemblyInitialize]
-        public static void SetDefaults(TestContext context)
-        {
-            AssertionOptions.AssertEquivalencyUsing(
-                options => { options.Using<Double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.0001));
+    //[TestClass]
+    //public static class TestInitializer
+    //{
+    //    [AssemblyInitialize]
+    //    public static void SetDefaults(TestContext context)
+    //    {
+    //        AssertionOptions.AssertEquivalencyUsing(
+    //            options => { options.Using<Double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.0001));
 
-                    return options;
-                });
-        }
+    //                return options;
+    //            });
+    //    }
+    //}
+
+
+internal static class Initializer
+{
+    [ModuleInitializer]
+    public static void SetDefaults()
+    {
+        AssertionOptions.AssertEquivalencyUsing(
+            options => {
+                options.Using<Double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.0001));
+
+                return options;
+            });
     }
+}
+
 }
 
 /* Examples I've found
